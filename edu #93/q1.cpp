@@ -38,66 +38,60 @@ ll modPower(ll num,ll r) {
 }
 
 ll nCr(ll n, ll r) { 
-	ll res = 1; 
-	if (r > n - r) {
-		r = n - r; 
-	}
-	rep(i,r) { 
-		res *= (n - i); 
-		res /= (i + 1); 
-	} 
-	return res; 
+    ll res = 1; 
+    if (r > n - r) {
+        r = n - r; 
+    }
+    rep(i,r) { 
+        res *= (n - i); 
+        res /= (i + 1); 
+    } 
+    return res; 
 }
 
 bool isPrime(long long n)
 {
-	if (n <= 1) return false;
-	if (n <= 3) return true;
-	if (n % 2 == 0 || n % 3 == 0) return false;
-
-	for (int i = 5; i * i <= n; i = i + 6)
-		if (n % i == 0 || n % (i + 2) == 0)
-			return false;
-
-		return true;
-	}
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+ 
+    for (int i = 5; i * i <= n; i = i + 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return false;
+ 
+    return true;
+}
 
 
 /*-------------------------------------------------*/
 
-	void solve() {
+void solve() {
 
-		ll a0, a1, a2;
-		cin >> a0 >> a1 >> a2;
-		ll b0, b1, b2;
-		cin >> b0 >> b1 >> b2;
+	int n;
+	cin >> n;
 
-		ll ans=0;
-
-		// maximise with 2's from a
-		ll mn = min(b1,a2);
-		ans += 2*(mn);
-		a2 -= mn;
-		b1 -= mn;
-		
-		if(b2 >= (a0+a2)) {
-			b2 -= (a0+a2);
-			ans-= (2*b2);
-		}
-
-		p1(ans);
+	ll a[n];
+	rep(i,n) {
+		cin >> a[i];
 	}
 
-
-	int main()
-	{
-		fastio;
-		int tc;
-		cin >> tc;
-
-		while(tc--)	{
-			solve();
-		}
-
-		return 0;
+	if(a[0]+a[1] <= a[n-1]) {
+		p3(1,2,n);
+	} else {
+		p1(-1);
 	}
+}
+
+
+int main()
+{
+	fastio;
+	int tc;
+	cin >> tc;
+
+	while(tc--)	{
+		solve();
+	}
+
+	return 0;
+}
