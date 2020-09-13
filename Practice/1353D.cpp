@@ -1,4 +1,7 @@
 #include<bits/stdc++.h>
+#pragma GCC optimize("O2")
+#pragma GCC optimize("unroll-loops")
+#pragma gcc target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -30,7 +33,7 @@ typedef priority_queue<ll> maxheap;
 #define sortby(v,prop) sort( v.begin( ), v.end( ), [ ]( const auto& lhs, const auto& rhs ){ return lhs.prop < rhs.prop; });
 #define rsortby(v,prop) sort( v.begin( ), v.end( ), [ ]( const auto& lhs, const auto& rhs ){ return lhs.prop > rhs.prop; });
 
-ll modPower(ll num,ll r){
+ll modPower(ll num,ll r) {
 	if(r==0) return 1;
 	if(r==1) return num%MOD;
 	ll ans=modPower(num,r/2)%MOD;
@@ -44,50 +47,60 @@ int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 /*-------------------------------------------------*/
 
-ll n, k, u, v;
+class Node {
+public:
+	ll len;
+	ll l;
+	ll h;
 
-ll dfs(vi *adj, vb &vis, vi &cnt, int st, int d) {
-
-	vis[st] = true;
-	ll children = 0;
-
-	for(auto it : adj[st]) {
-		if(!vis[it]) {
-			children += dfs(adj,vis,cnt,it,d+1);
-		}
+	bool operator<( const Node &a) const {
+		if(len == a.len) return l > a.l;
+		else return len < a.len;
 	}
-
-	cnt[st] = d - children;
-	return 1 + children;	
-}
+};
 
 void solve() {
 
-	cin >> n >> k;
+	priority_queue<Node> pq;
+	ll n, val = 1;
+	cin >> n;
+	pq.push({n,1,n});
+	vector<ll> ans(n+1,0);
 
-	vi adj[n];
+	while(!pq.empty()) {
+		
+		Node x = pq.top();
+		pq.pop();
+		
+		ll mid = (x.len%2==0) ? (x.l+x.h-1)/2 : (x.l+x.h)/2;
+		// p1(mid-1);
+		if(ans[mid] != 0) continue;
+		ans[mid] = val++;
 
-	rep(i,n-1) {
-		cin >> u >> v;
-		adj[u-1].pb(v-1);
-		adj[v-1].pb(u-1);
+		if(x.l <= mid-1) {
+			pq.push({mid-x.l,x.l,mid-1});
+		}
+
+		if(mid+1<=x.h) {
+			pq.push({x.h-mid,mid+1,x.h});
+		}
 	}
 
-	vb vis(n,false);
-	vi cnt(n,0);
-
-	dfs(adj,vis,cnt,0,0);
-
-	rsortv(cnt);
-	ll ans = 0;
-	rep(i,k) ans += cnt[i];
-	p1(ans);
+	for(int i = 1 ; i <= n ; i++) {
+		p0(ans[i]);
+	} cout << "\n";
 }
 
 
 int main()
 {
 	fastio;
-	solve();
+	int tc;
+	cin >> tc;
+
+	while(tc--)	{
+		solve();
+	}
+
 	return 0;
 }

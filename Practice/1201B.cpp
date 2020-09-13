@@ -39,49 +39,74 @@ ll modPower(ll num,ll r){
 	} return (((ans*ans)%MOD)*num)%MOD;
 }
 
+    template <typename T1, typename T2>
+    inline std::ostream& operator << (std::ostream& os, const std::pair<T1, T2>& p)
+    {
+        return os << "(" << p.first << ", " << p.second << ")";
+    }
+ 
+    template<typename T>
+    inline std::ostream &operator << (std::ostream & os,const std::vector<T>& v)
+    {
+        bool first = true;
+        os << "[";
+        for(unsigned int i = 0; i < v.size(); i++)
+        {
+            if(!first)
+                os << ", ";
+            os << v[i];
+            first = false;
+        }
+        return os << "]";
+    }
+ 
+    template<typename T>
+    inline std::ostream &operator << (std::ostream & os,const std::set<T>& v)
+    {
+        bool first = true;
+        os << "[";
+        for (typename std::set<T>::const_iterator iii = v.begin(); iii != v.end(); ++iii)
+        {
+            if(!first)
+                os << ", ";
+            os << *iii;
+            first = false;
+        }
+        return os << "]";
+    }
+ 
+    template<typename T1, typename T2>
+    inline std::ostream &operator << (std::ostream & os,const std::map<T1, T2>& v)
+    {
+        bool first = true;
+        os << "[";
+        for (typename std::map<T1, T2>::const_iterator iii = v.begin(); iii != v.end(); ++iii)
+        {
+            if(!first)
+                os << ", ";
+            os << *iii ;
+            first = false;
+        }
+        return os << "]";
+    }
+
 int dr4[] = {0,1,0,-1}, dc4[] = {1,0,-1,0};
 int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 /*-------------------------------------------------*/
 
-ll n, k, u, v;
-
-ll dfs(vi *adj, vb &vis, vi &cnt, int st, int d) {
-
-	vis[st] = true;
-	ll children = 0;
-
-	for(auto it : adj[st]) {
-		if(!vis[it]) {
-			children += dfs(adj,vis,cnt,it,d+1);
-		}
-	}
-
-	cnt[st] = d - children;
-	return 1 + children;	
-}
-
 void solve() {
 
-	cin >> n >> k;
+	ll n, num, mx = INT_MIN, sum = 0;
+	cin >> n;
 
-	vi adj[n];
-
-	rep(i,n-1) {
-		cin >> u >> v;
-		adj[u-1].pb(v-1);
-		adj[v-1].pb(u-1);
+	rep(i,n) {
+		cin >> num;
+		sum += num;
+		mx = max(mx,num);
 	}
 
-	vb vis(n,false);
-	vi cnt(n,0);
-
-	dfs(adj,vis,cnt,0,0);
-
-	rsortv(cnt);
-	ll ans = 0;
-	rep(i,k) ans += cnt[i];
-	p1(ans);
+	(sum%2 || sum-mx < mx) ? p1("NO") : p1("YES");
 }
 
 

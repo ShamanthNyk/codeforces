@@ -1,5 +1,8 @@
 #include<bits/stdc++.h>
 using namespace std;
+#pragma GCC optimize("O2")
+#pragma GCC optimize("unroll-loops")
+#pragma gcc target("avx2")
 #define ll long long
 #define ld long double
 #define MOD 1000000007
@@ -30,7 +33,7 @@ typedef priority_queue<ll> maxheap;
 #define sortby(v,prop) sort( v.begin( ), v.end( ), [ ]( const auto& lhs, const auto& rhs ){ return lhs.prop < rhs.prop; });
 #define rsortby(v,prop) sort( v.begin( ), v.end( ), [ ]( const auto& lhs, const auto& rhs ){ return lhs.prop > rhs.prop; });
 
-ll modPower(ll num,ll r){
+ll modPower(ll num,ll r) {
 	if(r==0) return 1;
 	if(r==1) return num%MOD;
 	ll ans=modPower(num,r/2)%MOD;
@@ -44,43 +47,26 @@ int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 /*-------------------------------------------------*/
 
-ll n, k, u, v;
-
-ll dfs(vi *adj, vb &vis, vi &cnt, int st, int d) {
-
-	vis[st] = true;
-	ll children = 0;
-
-	for(auto it : adj[st]) {
-		if(!vis[it]) {
-			children += dfs(adj,vis,cnt,it,d+1);
-		}
-	}
-
-	cnt[st] = d - children;
-	return 1 + children;	
-}
-
 void solve() {
 
-	cin >> n >> k;
+	ll n;
+	cin >> n;
 
-	vi adj[n];
-
-	rep(i,n-1) {
-		cin >> u >> v;
-		adj[u-1].pb(v-1);
-		adj[v-1].pb(u-1);
+	ll a[n], b[n];
+	rep(i,n) {
+		cin >> a[i] >> b[i];
 	}
 
-	vb vis(n,false);
-	vi cnt(n,0);
+	ll d[n], ans = n*1e12;
+	d[0] = max(0LL,a[0] - b[n-1]);
+	ll sum = d[0];
+	repb(i,1,n) d[i] = max(0LL,a[i] - b[i-1]), sum += d[i];
 
-	dfs(adj,vis,cnt,0,0);
-
-	rsortv(cnt);
-	ll ans = 0;
-	rep(i,k) ans += cnt[i];
+	rep(i,n) {
+		ll curr = sum - d[i] + a[i];
+		ans = min(curr,ans);
+	}
+	
 	p1(ans);
 }
 
@@ -88,6 +74,12 @@ void solve() {
 int main()
 {
 	fastio;
-	solve();
+	int tc;
+	cin >> tc;
+
+	while(tc--)	{
+		solve();
+	}
+
 	return 0;
 }

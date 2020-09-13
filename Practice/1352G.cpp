@@ -30,7 +30,7 @@ typedef priority_queue<ll> maxheap;
 #define sortby(v,prop) sort( v.begin( ), v.end( ), [ ]( const auto& lhs, const auto& rhs ){ return lhs.prop < rhs.prop; });
 #define rsortby(v,prop) sort( v.begin( ), v.end( ), [ ]( const auto& lhs, const auto& rhs ){ return lhs.prop > rhs.prop; });
 
-ll modPower(ll num,ll r){
+ll modPower(ll num,ll r) {
 	if(r==0) return 1;
 	if(r==1) return num%MOD;
 	ll ans=modPower(num,r/2)%MOD;
@@ -44,50 +44,45 @@ int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 /*-------------------------------------------------*/
 
-ll n, k, u, v;
+void solve() {
 
-ll dfs(vi *adj, vb &vis, vi &cnt, int st, int d) {
+	ll n;
+	cin >> n;
 
-	vis[st] = true;
-	ll children = 0;
+	ll a[n], k = 0;
+	if(n < 4) {
+		p1(-1);
+		return;
+	}
 
-	for(auto it : adj[st]) {
-		if(!vis[it]) {
-			children += dfs(adj,vis,cnt,it,d+1);
+	ll i = (n%2) ? n : n-1;
+	for(; i >= 1 ; i -= 2) a[k++] = i;
+	
+	a[k++] = 4, a[k++] = 2;
+	i = 6;
+	for(; i <= n ; i += 2) a[k++] = i;
+	
+	rep(i,n-1) {
+		if(abs(a[i+1]-a[i]) > 4 || abs(a[i+1]-a[i]) < 2) {
+			p1(i);
+			return;
 		}
 	}
 
-	cnt[st] = d - children;
-	return 1 + children;	
-}
-
-void solve() {
-
-	cin >> n >> k;
-
-	vi adj[n];
-
-	rep(i,n-1) {
-		cin >> u >> v;
-		adj[u-1].pb(v-1);
-		adj[v-1].pb(u-1);
-	}
-
-	vb vis(n,false);
-	vi cnt(n,0);
-
-	dfs(adj,vis,cnt,0,0);
-
-	rsortv(cnt);
-	ll ans = 0;
-	rep(i,k) ans += cnt[i];
-	p1(ans);
+	rep(i,n) p0(a[i]);
+	cout << "\n";
 }
 
 
 int main()
 {
 	fastio;
-	solve();
+	int tc;
+	cin >> tc;
+
+	while(tc--)	{
+		solve();
+	}
+
 	return 0;
 }
