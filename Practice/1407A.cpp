@@ -97,69 +97,91 @@ int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 // read once, read again, think, code
 
-string rev(string s) {
-	reverse(s.begin(),s.end());
-	return s;
-}
-
-#define MAXM 1e14
-
 void solve() {
 
 	ll n;
 	cin >> n;
-	ll cost[n];
-	string s[n], revs[n];
+	vi a(n), ans;
+	rep(i,n) cin >> a[i];
 
-	rep(i,n) cin >> cost[i];
 	rep(i,n) {
-		cin >> s[i];
-		revs[i] = rev(s[i]);
-	}
 
-	vvi dp(n,vi(2,0));	
-	dp[0][0] = 0;
-	dp[0][1] = cost[0];
+		if(a[i] == 1) {
 
-	// dp[i][0] -> min cost when si is not reversed 
-	// dp[i][1] -> min cost when si is reversed 
+			if(i==n-1) {
+				ans.pb(1);
+				continue;
+			}
 
-	repb(i,1,n) {
+			if(i < n-1 && a[i+1] == 1) {
+				int j = i, cnt = 0;
+				while(j < n && a[j] == 1) {
+					ans.pb(a[j]);
+					cnt++;
+					j++;
+				}
+				i = j;
+				
+				// p1(cnt);
+				if(cnt%2==1) ans.popb;
+			
+			} else {
+				if(i < n-2 && a[i+2] == 1) {
+					ans.pb(1);
+					ans.pb(1);
+					i+=2;
+				}
+			}
 
-		ll one = MAXM, two = MAXM;
-		
-		if(s[i-1] <= s[i] && dp[i-1][0] < MAXM) {
-			one = min(one,dp[i-1][0]);
-		} 
 
-		if(revs[i-1] <= s[i] && dp[i-1][1] < MAXM) {
-			one = min(one,dp[i-1][1]);
-		} 
-
-		if(s[i-1] <= revs[i] && dp[i-1][0] < MAXM) {
-			two = min(two,dp[i-1][0]+cost[i]);
-		} 
-
-		if(revs[i-1] <= revs[i] && dp[i-1][1] < MAXM) {
-			two = min(two,dp[i-1][1]+cost[i]);
-		} 
-
-		if(one == MAXM && two == MAXM) {
-			p1(-1);
-			return;
+		} else {
+			ans.pb(a[i]);
 		}
-
-		dp[i][0] = one;
-		dp[i][1] = two;
 	}
 
-	p1(min(dp[n-1][0], dp[n-1][1]));
+	int sz = ans.size();
+	for(int i = 0 ; i < ans.size() ; i++) {
+
+		if(ans[i] == 1) {
+			int cnt = 0;
+			while(i < ans.size() && ans[i] == 1) {
+				cnt++, i++;
+			}
+			// p1(cnt);
+			i--;
+			if(cnt%2==1) {
+				// p1(i);
+				ans[i] = -1;
+				sz--;
+			}
+		}
+	}
+
+	p1(sz);
+	for(auto num : ans) {
+		if(num!=-1) {
+			p0(num);
+		}
+	}
+	cout << "\n";
 }
 
 
 int main()
 {
 	fastio;
-	solve();
+
+    #ifndef ONLINE_JUDGE
+        freopen("input.txt","r",stdin);
+        // freopen("output.txt","w",stdin);
+    #endif
+
+	int tc;
+	cin >> tc;
+
+	while(tc--)	{
+		solve();
+	}
+
 	return 0;
 }

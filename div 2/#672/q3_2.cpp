@@ -97,69 +97,95 @@ int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 // read once, read again, think, code
 
-string rev(string s) {
-	reverse(s.begin(),s.end());
-	return s;
-}
+ll n, q;
 
-#define MAXM 1e14
+ll func(vi &a) {
+
+	
+	ll ans = 0;
+	bool mx = true;
+
+	int l = 0;
+	while(l < n-1 && a[l] < a[l+1]) l++;
+	if(l==n-1) {
+		return a[n-1];
+	}
+
+	ans = a[l];
+
+	mx = false;
+	while(l < n) {
+
+		if(mx) {
+			while(l < n-1 && a[l] < a[l+1]) l++;
+			ans += a[l];
+			if(l==n-1) {
+				return ans;
+			}
+			mx = false;
+		
+		} else {
+
+			while(l < n-1 && a[l] >= a[l+1]) l++;
+			if(l==n-1) {
+				return ans;
+			}
+			ans -= a[l];
+			mx = true;
+		}
+	}
+
+	return ans;
+
+}
 
 void solve() {
 
-	ll n;
-	cin >> n;
-	ll cost[n];
-	string s[n], revs[n];
+    cin >> n >> q;
 
-	rep(i,n) cin >> cost[i];
-	rep(i,n) {
-		cin >> s[i];
-		revs[i] = rev(s[i]);
-	}
+    vi a(n);
+    rep(i,n) {
+        cin >> a[i];
+    }
 
-	vvi dp(n,vi(2,0));	
-	dp[0][0] = 0;
-	dp[0][1] = cost[0];
+    ll prev = func(a);
+    p1(prev);
 
-	// dp[i][0] -> min cost when si is not reversed 
-	// dp[i][1] -> min cost when si is reversed 
+    rep(i,q) {
 
-	repb(i,1,n) {
+        int l, r;
+        cin >> l >> r;
+        if(l > r) swap(l,r);
+        l--, r--;
 
-		ll one = MAXM, two = MAXM;
-		
-		if(s[i-1] <= s[i] && dp[i-1][0] < MAXM) {
-			one = min(one,dp[i-1][0]);
-		} 
+        bool call = (l < n-1) && ((a[l] < a[l+1] && a[r] > a[l+1]) || (a[l] > a[l+1] && a[r] < a[l+1]));
 
-		if(revs[i-1] <= s[i] && dp[i-1][1] < MAXM) {
-			one = min(one,dp[i-1][1]);
-		} 
+        swap(a[l],a[r]);
+        // if(call) {
+            prev = func(a);
+        // }
 
-		if(s[i-1] <= revs[i] && dp[i-1][0] < MAXM) {
-			two = min(two,dp[i-1][0]+cost[i]);
-		} 
+        p1(prev);
+    }
 
-		if(revs[i-1] <= revs[i] && dp[i-1][1] < MAXM) {
-			two = min(two,dp[i-1][1]+cost[i]);
-		} 
-
-		if(one == MAXM && two == MAXM) {
-			p1(-1);
-			return;
-		}
-
-		dp[i][0] = one;
-		dp[i][1] = two;
-	}
-
-	p1(min(dp[n-1][0], dp[n-1][1]));
 }
 
 
 int main()
 {
 	fastio;
-	solve();
+
+    #ifndef ONLINE_JUDGE
+        freopen("input.txt","r",stdin);
+        // freopen("output.txt","w",stdin);
+    #endif
+
+	int tc;
+	cin >> tc;
+
+	while(tc--)	{
+		solve();
+	}
+
 	return 0;
 }

@@ -2,7 +2,7 @@
 using namespace std;
 #define ll long long
 #define ld long double
-#define MOD 1000000007
+#define MOD 998244353
 #define fi first
 #define se second
 #define rep(i,n) for(ll i = 0 ; i < n ; i++)
@@ -30,7 +30,7 @@ typedef priority_queue<ll> maxheap;
 #define sortby(v,prop) sort( v.begin( ), v.end( ), [ ]( const auto& lhs, const auto& rhs ){ return lhs.prop < rhs.prop; });
 #define rsortby(v,prop) sort( v.begin( ), v.end( ), [ ]( const auto& lhs, const auto& rhs ){ return lhs.prop > rhs.prop; });
 
-ll modPower(ll num,ll r) {
+ll modPower(ll num,ll r){
 	if(r==0) return 1;
 	if(r==1) return num%MOD;
 	ll ans=modPower(num,r/2)%MOD;
@@ -95,71 +95,126 @@ int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 /*-------------------------------------------------*/
 
-// read once, read again, think, code
+// read once, read again, think, code 
 
-string rev(string s) {
-	reverse(s.begin(),s.end());
-	return s;
+map<pii,ll> m;
+
+ll nCr(ll n, ll r) 
+{ 
+    long long p = 1, k = 1; 
+    if (n - r < r) 
+        r = n - r; 
+  
+    if (r != 0) { 
+        while (r) { 
+            p = (p* n)%MOD; 
+            k = (k*r)%MOD;  
+  
+            long long m = __gcd(p, k); 
+            p = (p / m)%MOD; 
+            k = (k/m)%MOD; 
+  
+            n--; 
+            r--; 
+        } 
+ 
+    } 
+  
+    else
+        p = 1; 
+  
+    // if our approach is correct p = ans and k =1 
+    return p%MOD; 
+} 
+
+// ll nCr(ll n, ll r) { 
+// 	ll oN = n, oR = r;
+
+// 	if(m[{n,r}] != 0) return m[{n,r}];
+
+//     ll res = 1; 
+//     if (r > n - r) {
+//         r = n - r; 
+//     }
+//     rep(i,r) { 
+//         res = (res * (n - i)) % MOD; 
+//         res = (res / (i + 1))%MOD; 
+//     } 
+
+//     m[{oN,oR}] = res%MOD;
+//     return res%MOD; 
+// }
+
+
+bool comp(pii &a, pii &b) {
+	if(a.fi == b.fi) return a.se > b.se;
+	return a.fi < b.fi;
 }
 
-#define MAXM 1e14
 
 void solve() {
 
-	ll n;
-	cin >> n;
-	ll cost[n];
-	string s[n], revs[n];
+	ll n, k;
+	cin >> n >> k;
 
-	rep(i,n) cin >> cost[i];
+	vector<pii> a;
+
 	rep(i,n) {
-		cin >> s[i];
-		revs[i] = rev(s[i]);
+		ll l, r;
+		cin >> l >> r;
+		a.pb({l,1});
+		a.pb({r,-1});
 	}
 
-	vvi dp(n,vi(2,0));	
-	dp[0][0] = 0;
-	dp[0][1] = cost[0];
+	sort(a.begin(), a.end(), comp);
 
-	// dp[i][0] -> min cost when si is not reversed 
-	// dp[i][1] -> min cost when si is reversed 
+	vi peaks;
+	ll sum = 0;
+	for(auto it : a) {
+		sum += it.se;
+		peaks.pb(sum);
+	}
 
-	repb(i,1,n) {
+	// p1(peaks);
 
-		ll one = MAXM, two = MAXM;
-		
-		if(s[i-1] <= s[i] && dp[i-1][0] < MAXM) {
-			one = min(one,dp[i-1][0]);
-		} 
+	ll sz = peaks.size(), ans = 0, prev = -1;
+	bool init  = false;
+	rep(i,sz-1) {
+		if(peaks[i] == k && !init) {
+			init = true;
+			ans = 1;
+		} else if(init) {
+			if(peaks[i] >= k && peaks[i] > peaks[i-1]) {
 
-		if(revs[i-1] <= s[i] && dp[i-1][1] < MAXM) {
-			one = min(one,dp[i-1][1]);
-		} 
+				ll mul;
+				if(prev == -1) {
+					mul = nCr(peaks[i]-1,k-1);
+				} else {
+					mul = (mul * (peaks[i]-1)) % MOD;
+				}
 
-		if(s[i-1] <= revs[i] && dp[i-1][0] < MAXM) {
-			two = min(two,dp[i-1][0]+cost[i]);
-		} 
-
-		if(revs[i-1] <= revs[i] && dp[i-1][1] < MAXM) {
-			two = min(two,dp[i-1][1]+cost[i]);
-		} 
-
-		if(one == MAXM && two == MAXM) {
-			p1(-1);
-			return;
+				ans = (ans + mul)%MOD;
+			} else {
+				prev = -1;
+			}
 		}
 
-		dp[i][0] = one;
-		dp[i][1] = two;
+		// p0(ans);
 	}
-
-	p1(min(dp[n-1][0], dp[n-1][1]));
+	// cout << "\n";
+	p1(ans);
 }
 
 
 int main()
 {
 	fastio;
+
+    #ifndef ONLINE_JUDGE
+        freopen("input.txt","r",stdin);
+        // freopen("output.txt","w",stdin);
+    #endif
+
 	solve();
 	return 0;
 }

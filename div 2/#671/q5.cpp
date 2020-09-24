@@ -97,69 +97,68 @@ int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 // read once, read again, think, code
 
-string rev(string s) {
-	reverse(s.begin(),s.end());
-	return s;
-}
-
-#define MAXM 1e14
-
 void solve() {
 
-	ll n;
+	ll n, x;
 	cin >> n;
-	ll cost[n];
-	string s[n], revs[n];
-
-	rep(i,n) cin >> cost[i];
-	rep(i,n) {
-		cin >> s[i];
-		revs[i] = rev(s[i]);
-	}
-
-	vvi dp(n,vi(2,0));	
-	dp[0][0] = 0;
-	dp[0][1] = cost[0];
-
-	// dp[i][0] -> min cost when si is not reversed 
-	// dp[i][1] -> min cost when si is reversed 
-
-	repb(i,1,n) {
-
-		ll one = MAXM, two = MAXM;
-		
-		if(s[i-1] <= s[i] && dp[i-1][0] < MAXM) {
-			one = min(one,dp[i-1][0]);
-		} 
-
-		if(revs[i-1] <= s[i] && dp[i-1][1] < MAXM) {
-			one = min(one,dp[i-1][1]);
-		} 
-
-		if(s[i-1] <= revs[i] && dp[i-1][0] < MAXM) {
-			two = min(two,dp[i-1][0]+cost[i]);
-		} 
-
-		if(revs[i-1] <= revs[i] && dp[i-1][1] < MAXM) {
-			two = min(two,dp[i-1][1]+cost[i]);
-		} 
-
-		if(one == MAXM && two == MAXM) {
-			p1(-1);
-			return;
+	x = sqrt(n);
+	map<int,bool> m;
+	repeb(i,2,x) {
+		if(n%i==0) {
+			m[i] = true;
+			if(i != n/i) {
+				m[n/i] = true;
+			}
 		}
+	}
+	bool done = false;
+	vi ans;
 
-		dp[i][0] = one;
-		dp[i][1] = two;
+	for(auto it : m) {
+		if(it.se) {
+			for(int i = 1 ; it.fi*i <= n ; i++) {
+				if(m[it.fi*i]) {
+					m[it.fi*i] = false;
+					ans.pb(it.fi*i);
+				}
+			}
+		}
+	}	
+
+	vi final;
+	int cnt = 0;
+	for(int i = 0 ; i < ans.size() ; i++) {
+		int a = ans[i], b = ans[(i+1)%ans.size()];
+		final.pb(ans[i]);
+		if(__gcd(a,b) == 1) {
+			if(!done) {
+				done = true;
+				final.pb(n);
+			} else {
+				cnt++;
+			}
+		} 
 	}
 
-	p1(min(dp[n-1][0], dp[n-1][1]));
+	if(!done) {
+		final.pb(n);
+	}
+
+	p1(final);
+	p1(cnt);
+
 }
 
 
 int main()
 {
 	fastio;
-	solve();
+	int tc;
+	cin >> tc;
+
+	while(tc--)	{
+		solve();
+	}
+
 	return 0;
 }

@@ -97,69 +97,73 @@ int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 // read once, read again, think, code
 
-string rev(string s) {
-	reverse(s.begin(),s.end());
-	return s;
-}
-
-#define MAXM 1e14
-
 void solve() {
 
-	ll n;
-	cin >> n;
-	ll cost[n];
-	string s[n], revs[n];
+	ll n, q;
+	cin >> n >> q;
 
-	rep(i,n) cin >> cost[i];
+	vi a(n);
 	rep(i,n) {
-		cin >> s[i];
-		revs[i] = rev(s[i]);
+		cin >> a[i];
 	}
 
-	vvi dp(n,vi(2,0));	
-	dp[0][0] = 0;
-	dp[0][1] = cost[0];
+	ll ans = 0;
 
-	// dp[i][0] -> min cost when si is not reversed 
-	// dp[i][1] -> min cost when si is reversed 
+	bool mx = true;
 
-	repb(i,1,n) {
+	int l = 0;
+	while(l < n-1 && a[l] < a[l+1]) l++;
+	if(l==n-1) {
+		p1(a[n-1]);
+		return;
+	}
 
-		ll one = MAXM, two = MAXM;
+	ans = a[l];
+
+	mx = false;
+	while(l < n) {
+
+		if(mx) {
+			while(l < n-1 && a[l] < a[l+1]) l++;
+			ans += a[l];
+			if(l==n-1) {
+				p1(ans);
+				return;
+			}
+			mx = false;
 		
-		if(s[i-1] <= s[i] && dp[i-1][0] < MAXM) {
-			one = min(one,dp[i-1][0]);
-		} 
+		} else {
 
-		if(revs[i-1] <= s[i] && dp[i-1][1] < MAXM) {
-			one = min(one,dp[i-1][1]);
-		} 
-
-		if(s[i-1] <= revs[i] && dp[i-1][0] < MAXM) {
-			two = min(two,dp[i-1][0]+cost[i]);
-		} 
-
-		if(revs[i-1] <= revs[i] && dp[i-1][1] < MAXM) {
-			two = min(two,dp[i-1][1]+cost[i]);
-		} 
-
-		if(one == MAXM && two == MAXM) {
-			p1(-1);
-			return;
+			while(l < n-1 && a[l] >= a[l+1]) l++;
+			if(l==n-1) {
+				p1(ans);
+				return;
+			}
+			ans -= a[l];
+			mx = true;
 		}
-
-		dp[i][0] = one;
-		dp[i][1] = two;
 	}
 
-	p1(min(dp[n-1][0], dp[n-1][1]));
+	p1(ans);
+
 }
 
 
 int main()
 {
 	fastio;
-	solve();
+
+    #ifndef ONLINE_JUDGE
+        freopen("input.txt","r",stdin);
+        // freopen("output.txt","w",stdin);
+    #endif
+
+	int tc;
+	cin >> tc;
+
+	while(tc--)	{
+		solve();
+	}
+
 	return 0;
 }

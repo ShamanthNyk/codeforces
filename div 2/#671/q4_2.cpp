@@ -30,7 +30,7 @@ typedef priority_queue<ll> maxheap;
 #define sortby(v,prop) sort( v.begin( ), v.end( ), [ ]( const auto& lhs, const auto& rhs ){ return lhs.prop < rhs.prop; });
 #define rsortby(v,prop) sort( v.begin( ), v.end( ), [ ]( const auto& lhs, const auto& rhs ){ return lhs.prop > rhs.prop; });
 
-ll modPower(ll num,ll r) {
+ll modPower(ll num,ll r){
 	if(r==0) return 1;
 	if(r==1) return num%MOD;
 	ll ans=modPower(num,r/2)%MOD;
@@ -95,65 +95,38 @@ int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 /*-------------------------------------------------*/
 
-// read once, read again, think, code
-
-string rev(string s) {
-	reverse(s.begin(),s.end());
-	return s;
-}
-
-#define MAXM 1e14
+// read once, read again, think, code 
 
 void solve() {
 
 	ll n;
 	cin >> n;
-	ll cost[n];
-	string s[n], revs[n];
+	ll a[n];
+	rep(i,n) cin >> a[i];
+	sort(a,a+n);
 
-	rep(i,n) cin >> cost[i];
-	rep(i,n) {
-		cin >> s[i];
-		revs[i] = rev(s[i]);
+	if(n <= 2) {
+		p1(0);
+		rep(i,n) p0(a[i]);
+		cout << "\n";
+		return;
 	}
 
-	vvi dp(n,vi(2,0));	
-	dp[0][0] = 0;
-	dp[0][1] = cost[0];
+	int k = 0, i = 1;
 
-	// dp[i][0] -> min cost when si is not reversed 
-	// dp[i][1] -> min cost when si is reversed 
-
-	repb(i,1,n) {
-
-		ll one = MAXM, two = MAXM;
-		
-		if(s[i-1] <= s[i] && dp[i-1][0] < MAXM) {
-			one = min(one,dp[i-1][0]);
+	ll ans[n], cnt = 0;
+	for(int i = 1 ; i < n ; i += 2) ans[i] = a[k++]; 
+	for(int i = 0 ; i < n ; i += 2) ans[i] = a[k++]; 
+	for(int i = 1 ; i < n-1 ; i += 2) {
+		if(ans[i-1] > ans[i] && ans[i-1] > ans[i]) {
+			cnt++;
 		} 
-
-		if(revs[i-1] <= s[i] && dp[i-1][1] < MAXM) {
-			one = min(one,dp[i-1][1]);
-		} 
-
-		if(s[i-1] <= revs[i] && dp[i-1][0] < MAXM) {
-			two = min(two,dp[i-1][0]+cost[i]);
-		} 
-
-		if(revs[i-1] <= revs[i] && dp[i-1][1] < MAXM) {
-			two = min(two,dp[i-1][1]+cost[i]);
-		} 
-
-		if(one == MAXM && two == MAXM) {
-			p1(-1);
-			return;
-		}
-
-		dp[i][0] = one;
-		dp[i][1] = two;
 	}
 
-	p1(min(dp[n-1][0], dp[n-1][1]));
+
+	p1(cnt);
+	rep(i,n) p0(ans[i]);
+	cout << "\n";
 }
 
 

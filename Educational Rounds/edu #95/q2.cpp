@@ -97,69 +97,44 @@ int dr8[] = {0,1,1,1,0,-1,-1,-1}, dc8[] = {1,1,0,-1,-1,-1,0,1};
 
 // read once, read again, think, code
 
-string rev(string s) {
-	reverse(s.begin(),s.end());
-	return s;
-}
-
-#define MAXM 1e14
-
 void solve() {
 
-	ll n;
+	maxheap pq;
+	int n;
 	cin >> n;
-	ll cost[n];
-	string s[n], revs[n];
 
-	rep(i,n) cin >> cost[i];
+	ll a[n], locked[n];
+	rep(i,n) cin >> a[i];
+	rep(i,n) cin >> locked[i];
+
+	queue<int> q;
 	rep(i,n) {
-		cin >> s[i];
-		revs[i] = rev(s[i]);
-	}
-
-	vvi dp(n,vi(2,0));	
-	dp[0][0] = 0;
-	dp[0][1] = cost[0];
-
-	// dp[i][0] -> min cost when si is not reversed 
-	// dp[i][1] -> min cost when si is reversed 
-
-	repb(i,1,n) {
-
-		ll one = MAXM, two = MAXM;
-		
-		if(s[i-1] <= s[i] && dp[i-1][0] < MAXM) {
-			one = min(one,dp[i-1][0]);
-		} 
-
-		if(revs[i-1] <= s[i] && dp[i-1][1] < MAXM) {
-			one = min(one,dp[i-1][1]);
-		} 
-
-		if(s[i-1] <= revs[i] && dp[i-1][0] < MAXM) {
-			two = min(two,dp[i-1][0]+cost[i]);
-		} 
-
-		if(revs[i-1] <= revs[i] && dp[i-1][1] < MAXM) {
-			two = min(two,dp[i-1][1]+cost[i]);
-		} 
-
-		if(one == MAXM && two == MAXM) {
-			p1(-1);
-			return;
+		if(locked[i] == 0) {
+			pq.push(a[i]);
+			q.push(i);
 		}
-
-		dp[i][0] = one;
-		dp[i][1] = two;
 	}
 
-	p1(min(dp[n-1][0], dp[n-1][1]));
+	while(!pq.empty()) {
+		a[q.front()] = pq.top();
+		pq.pop();
+		q.pop();
+	}
+
+	rep(i,n) p0(a[i]);
+	cout << "\n";
 }
 
 
 int main()
 {
 	fastio;
-	solve();
+	int tc;
+	cin >> tc;
+
+	while(tc--)	{
+		solve();
+	}
+
 	return 0;
 }
