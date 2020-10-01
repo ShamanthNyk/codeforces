@@ -99,9 +99,9 @@ void solve() {
 
 	ll a, b;
 	cin >> a >> b;
-	ll d = abs(a-b);
-	ll ans = ceil(d/10.0);
-	p1(ans);
+	if(b>a) swap(a,b);
+    if((a-b)%k!=0) cout<<(a-b)/10+1<<"\n";
+    else cout<<(a-b)/10<<"\n";
 }
 
 
